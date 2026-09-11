@@ -1,0 +1,94 @@
+# ============================================================================
+# Proteoform Analyzer -- Hugging Face Spaces (ZeroGPU) requirements
+# ----------------------------------------------------------------------------
+# This is the requirements file Hugging Face Spaces installs at build time
+# (it lives at the repo root next to app.py). It is intentionally LEANER than
+# the package's own proteoform_analyzer/requirements.txt: it installs only what
+# is needed for the Space to (a) import app.py and build the Gradio UI, and
+# (b) run the in-process, ZeroGPU-accelerated steps -- ESM2 sequence embedding,
+# the ESM2 zero-shot ddG scorer, UMAP, protein-contact-network analysis, and all
+# visualisations / tables.
+#
+# Heavy optional back-ends are DELIBERATELY OMITTED so the Space builds quickly
+# and reliably. They pull large / hard-to-build native wheels and, on ZeroGPU,
+# either need external binaries or an API key. Each degrades cleanly at runtime
+# with an actionable message (see DEPLOY_HF_ZEROGPU.md > "What runs on ZeroGPU"):
+#   * openmm / simtk / mdtraj  -> Molecular Dynamics tab
+#   * meeko (+ the `vina` binary)     -> AutoDock Vina docking
+#   * ptmpsi                          -> PTM / proteoform side-chain grafting
+#   * boltz-api / local boltz binary  -> Boltz-2 folding & docking (set the
+#                                        BOLTZ_API_KEY Space secret to enable)
+#   * torch-scatter / dgl / e3nn      -> DiffSBDD / GNN ligand design
+#   * a local RFAntibody checkout     -> antibody design
+# To enable any of them, add the corresponding package here (and, for native
+# tools, install them via packages.txt or a custom Dockerfile).
+# ============================================================================
+
+# --- scientific core ---
+numpy>=1.24
+scipy>=1.10
+scikit-learn>=1.2
+networkx>=3.0
+pandas>=2.0
+
+# --- structural biology / cheminformatics ---
+biopython==1.80
+rdkit>=2023.3
+imageio
+openbabel-wheel
+biotite>=0.38.0
+git+https://github.com/jensengroup/xyz2mol.git
+meeko 
+gemmi 
+
+# --- ESM2 ---
+fair-esm>=2.0.0
+
+# --- dimensionality reduction ---
+umap-learn>=0.5.3
+
+# --- protein contact networks ---
+cdlib>=0.3.0
+
+# --- visualization ---
+matplotlib>=3.7
+seaborn>=0.12
+plotly>=5.18
+
+# --- utilities ---
+requests>=2.28
+PyYAML>=6.0
+tqdm>=4.64
+joblib
+omegaconf
+hydra-core
+icecream
+opt-einsum
+click>=8.0.0
+pyrsistent
+wandb
+pytorch-lightning
+
+# --- graph / geometric deps ---
+torchvision
+torch-scatter
+dgl
+e3nn
+
+# --- molecular dynamics ---
+openmm
+mdtraj
+
+
+# --- ligand design ---
+torchdata==0.9.0
+-e ./_vendored/RFantibody
+boltz-api
+mhcflurry
+
+# --- Gradio UI ---
+gradio
+
+# --- Leiden ---
+igraph
+leidenalg

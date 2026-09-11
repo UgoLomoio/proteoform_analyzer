@@ -1,0 +1,30 @@
+# Generated results directory
+results/
+boltz-experiments/
+overleaf/
+
+# Vendored proprietary FoldX installer and runtime (do not redistribute)
+**/foldx*/
+**/*foldx*/
+proteoform_analyzer/_vendored/foldx*/
+
+__pycache__/
+*.pyc
+
+# Local environments
+.venv/
+**/.venv/
+
+# Documentation sources and generated PDFs/images
+overleaf/
+
+# Generated RFantibody outputs
+**/_vendored/**/outputs/
+**/_vendored/**/smoke_test_nanobody/
+
+# Local RFantibody tests/examples
+**/_vendored/**/test/
+**/_vendored/**/scripts/examples/
+
+# RFantibody weights (downloaded at runtime)
+_vendored/RFantibody/weights/

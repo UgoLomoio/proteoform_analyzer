@@ -1,0 +1,124 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proteoform-analyzer"
+version = "3.7.0"
+description = "Mutation & PTM effect analysis for oligomeric proteins (proteoform pipeline)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Proteoform Analyzer contributors" }]
+keywords = ["bioinformatics", "proteoform", "mutation", "PTM", "docking",
+            "molecular-dynamics", "structural-biology"]
+
+# Core runtime deps (kept in sync with requirements.txt).
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=1.5",
+    "scipy>=1.10",
+    "scikit-learn>=1.2",
+    "networkx>=3.0",
+    "biopython>=1.81",
+    "rdkit>=2023.3",
+    "cdlib>=0.3.0",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "plotly>=5.18",
+    "gradio>=4.0",
+    "requests>=2.28",
+    "PyYAML>=6.0",
+    "tqdm>=4.64",
+]
+
+[project.optional-dependencies]
+# --- Molecular dynamics (openmm engine + trajectory analysis) ---
+md = [
+    "mdtraj>=1.9",
+    "openmm>=8.0",
+]
+
+# --- ESM2 embeddings / UMAP (esm2 step) and sequence-based ddG ---
+esm = [
+    "fair-esm>=2.0",
+    "torch>=2.0",
+    "umap-learn>=0.5",
+]
+
+# --- Small-molecule docking receptor/ligand prep (AutoDock Vina path) ---
+# NOTE: the `vina` executable itself is a system binary (see README).
+dock = [
+    "meeko>=0.5",
+]
+
+# --- De novo ligand design (DiffSBDD). Heavy; GPU strongly recommended. ---
+# NOTE: DiffSBDD also needs the `three_to_index` helper -- see README caveat.
+design = [
+    "torch>=2.0",
+    "pytorch-lightning>=2.0",
+    "torch-scatter>=2.1",
+    "wandb>=0.15",
+    "openbabel-wheel>=3.1",
+]
+
+# --- MHC epitope prediction ---
+# MHC-I is fully local via MHCflurry. MHC-II (NetMHCIIpan 4.3 BA) is served by
+# the IEDB web API and needs only outbound HTTPS (no extra package).
+mhc = [
+    "mhcflurry>=2.0",
+]
+
+# --- Protein contact network: infomap community algorithm ---
+# cdlib is a core dep; infomap additionally needs wurlitzer to silence its
+# native C++ stdout (otherwise the step logs a warning and skips infomap).
+pcn = [
+    "wurlitzer>=3.0",
+]
+
+# --- HPC / GPU back-end (Boltz-2 folding+docking, RFAntibody, ddG) ---
+# Only needed to *submit* GPU jobs to the Biomni HPC backend. All non-GPU
+# steps run locally without this. Boltz-2 can also run via a local binary.
+hpc = [
+    "biomni>=0.1",
+]
+
+# --- Hosted Boltz API client (official api.boltz.bio) ---
+# Enables the tier-1 Boltz-2 backend (fold/dock/design) via an API key
+# (config `api_key` or the BOLTZ_API_KEY env var). No local GPU required.
+boltzapi = [
+    "boltz_api>=0.1",
+]
+
+# --- Optional: Plotly-native static image export (else matplotlib fallback) ---
+viz = [
+    "kaleido>=0.2",
+]
+
+# Convenience meta-extra: everything that is pip-installable (no system bins).
+all = [
+    "mdtraj>=1.9", "openmm>=8.0",
+    "fair-esm>=2.0", "torch>=2.0", "umap-learn>=0.5",
+    "meeko>=0.5",
+    "pytorch-lightning>=2.0", "torch-scatter>=2.1", "wandb>=0.15", "openbabel-wheel>=3.1",
+    "mhcflurry>=2.0",
+    "wurlitzer>=3.0",
+    "kaleido>=0.2",
+    "boltz_api>=0.1",
+]
+
+[project.scripts]
+proteoform-analyzer = "proteoform_analyzer.cli:main"
+
+[project.urls]
+"Reference paper" = "https://doi.org/10.1038/s41540-025-00582-2"
+
+[tool.setuptools]
+# This project is distributed as a single package directory that also carries
+# vendored back-ends under _vendored/ (DiffSBDD, P2Rank, pcn_miner, ptmpsi,
+# TMalign). Those are shipped as package data, not importable subpackages.
+packages = ["proteoform_analyzer"]
+package-dir = { "proteoform_analyzer" = "." }
+
+[tool.setuptools.package-data]
+proteoform_analyzer = ["_vendored/**/*"]

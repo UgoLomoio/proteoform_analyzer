@@ -1,0 +1,27 @@
+# Version control / CI
+.git
+.gitattributes
+
+# Python caches and virtualenvs (the shipped RFantibody .venv is
+# machine-specific; `uv sync` recreates it at image build time)
+**/__pycache__
+**/*.pyc
+**/*.pyo
+.venv
+**/.venv
+
+# Local run outputs
+results/
+**/outputs/
+proteoform_analyzer/_vendored/RFantibody/scripts/examples/example_outputs/
+
+# Test artifacts not needed at runtime
+proteoform_analyzer/_vendored/RFantibody/test/
+
+# Docs build artifacts
+docs/*.pdf
+docs/_build/
+
+# OS / editor noise
+.DS_Store
+*.swp
