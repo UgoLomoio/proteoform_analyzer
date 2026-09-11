@@ -13,6 +13,13 @@ suggested_hardware: zero-a10g
 short_description: An AI-powered tool to analyze proteoform effects.
 ---
 
+## Documentation
+- [User Manual](./manual.pdf)
+- [Supplementary Materials](./supplementary.pdf)
+
+## Notes for Reviewers
+Both documents are hosted in this repository for peer-review purposes.
+
 # Proteoform Analyzer
 
 An AI-assisted tool to analyze the effects of single-point mutations,
